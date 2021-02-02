@@ -9,7 +9,8 @@ public class ContactDto {
     public String lastName;
     public int age;
 
-    public ContactDto(String name, String lastName, int age) {
+    public ContactDto(int id, String name, String lastName, int age) {
+        this.id = id;
         this.name = name;
         this.lastName = lastName;
         this.age = age;

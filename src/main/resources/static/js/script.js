@@ -43,9 +43,11 @@ class FormController {
             age: formDom.elements.age.value,
         };
         const response = await this.contactClient.add(contact);
+
         if (response.ok) {
             await this._init();
         }
+        document.forms[0].reset();
     }
 
 

@@ -14,18 +14,18 @@
             <li class="collection-header">
                 <form class="row" method="post" id="contact-form">
                     <div class="col s2">
-                        <a id="add-button" class="btn-floating btn-large waves-effect waves-light blue">
-                            <i data-action="add" class="material-icons">add</i>
-                            <a style="float: left; margin-top: 15px; margin-right: 5px;"
-                               class="hide btn-floating btn-large waves-effect waves-light blue" id="edit-button">
-                                <i class="material-icons" data-action="edit">edit</i></a>
-                            <a style="float: left; margin-top: 15px;"
-                               class="hide btn-floating btn-large waves-effect waves-light red" id="cancel-button">
-                                <i class="material-icons" data-action="cancel">close</i></a>
-                        </a>
+                        <a id="add-button" style="float: left; margin-top: 15px"
+                           class="btn-floating btn-large waves-effect waves-light blue">
+                            <i data-action="add" class="material-icons">add</i></a>
+                        <a style="float: left; margin-top: 15px; margin-right: 5px;"
+                           class="hide btn-floating btn-large waves-effect waves-light blue" id="edit-button">
+                            <i class="material-icons" data-action="edit">edit</i></a>
+                        <a style="float: left; margin-top: 15px;"
+                           class="hide btn-floating btn-large waves-effect waves-light red" id="cancel-button">
+                            <i class="material-icons" data-action="cancel">close</i></a>
                     </div>
 
-                    <input type="hidden"/>
+                    <input type="hidden" name="id"/>
                     <div class="input-field col s4">
                         <i class="material-icons prefix">account_circle</i>
                         <input id="name" name="name" type="text" class="validate">
@@ -33,7 +33,7 @@
                     </div>
                     <div class="input-field col s4">
                         <i class="material-icons prefix">account_circle</i>
-                        <input id="lastname" name="lastname" type="text" class="validate">
+                        <input id="lastname" name="lastName" type="text" class="validate">
                         <label for="lastname">Last Name</label>
                     </div>
                     <div class="input-field col s2">
@@ -58,16 +58,16 @@
                 </div>
                 <!--contact data-->
             <ul class="collection hide contact-details">
-                <li class="collection-item ">
+                <li class="collection-item">
                     <div><strong>Name:</strong><span class="secondary-content black-text name-value"></span>
                     </div>
                 </li>
-                <li class="collection-item ">
+                <li class="collection-item">
                     <div><strong>Last Name:</strong><span
                             class="secondary-content black-text second-name-value"></span>
                     </div>
                 </li>
-                <li class="collection-item ">
+                <li class="collection-item">
                     <div><strong>Age:</strong><span class="secondary-content black-text age-value"></span>
                     </div>
                 </li>

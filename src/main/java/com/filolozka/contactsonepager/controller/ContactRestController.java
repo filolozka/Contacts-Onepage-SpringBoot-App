@@ -22,12 +22,12 @@ public class ContactRestController {
     @PostMapping
     public ContactDto create(@RequestBody ContactDto contactDto) {
         Contact contact = contactService.create(contactDto.name, contactDto.lastName, contactDto.age);
-       contactDto.id = contact.getId();
+        contactDto.id = contact.getId();
         return contactDto;
     }
 
     @GetMapping("{id}")
-    public ContactDto get(@PathVariable int id){
+    public ContactDto get(@PathVariable int id) {
         Contact contact = contactService.get(id);
         return new ContactDto(
                 contact.getId(),
@@ -37,8 +37,19 @@ public class ContactRestController {
     }
 
     @GetMapping
-    public List<ContactDto> getAll() {
-        List<Contact> contacts = contactService.getAll();
+    public List<ContactDto> getAll(@RequestParam(value = "lastname", required = false) String lastName,
+                                   @RequestParam(value = "name", required = false) String name) {
+        List<Contact> contacts;
+        if (lastName == null && name == null) {
+            contacts = contactService.getAll();
+        }
+        else if (lastName == null) {
+            contacts = contactService.getAllByName(name);
+        }
+        else if (name == null) {
+            contacts = contactService.getAllByLastName(lastName);
+        }
+        else contacts = contactService.getAllByLastNameAndNameIgnoreCase(lastName, name);
         return contacts.stream().map(contact -> new ContactDto(
                 contact.getId(), contact.getName(), contact.getLastName(), contact.getAge())
         ).collect(Collectors.toList());
@@ -51,7 +62,7 @@ public class ContactRestController {
     }
 
     @DeleteMapping("{id}")
-    public ContactDto remove(@PathVariable int id){
+    public ContactDto remove(@PathVariable int id) {
         Contact contact = contactService.delete(id);
         return new ContactDto(contact.getId(), contact.getName(), contact.getLastName(), contact.getAge());
     }

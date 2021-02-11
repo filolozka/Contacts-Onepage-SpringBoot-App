@@ -4,9 +4,10 @@ document.addEventListener("DOMContentLoaded", function main() {
     const contactWrapperDom = document.querySelector("#contact-wrapper");
 
     const contactClient = new ContactClient();
-    const contactRenderer = new HtmlRenderer(contactTemplateDom, contactWrapperDom);
+    const htmlRenderer = new HtmlRenderer(contactTemplateDom, contactWrapperDom, formDom);
 
-    const formController = new FormController(contactClient, contactRenderer);
+    const formController = new FormController(contactClient, htmlRenderer);
+    const contactController = new ContactController(htmlRenderer, contactClient);
 
     formDom.addEventListener("click", formController);
     contactWrapperDom.addEventListener("click", contactController);
@@ -30,9 +31,19 @@ class ContactController {
         this.htmlRenderer.toggleContactDetails(event);
     }
 
-    remove(event) {
-        //TODO complete. Take the contact id from the event.target (see 'toEditForm' from html renderer to get contactDom -> contact)
-        // then rerender all persons
+    async remove(event) {
+        const contactDom = event.target.closest(".real-contact");
+        const contact = contactDom.contact;
+
+        const response = await this.contactClient.remove(contact);
+
+        if (response.ok){
+            const response = await this.contactClient.getAll();
+            if (response.ok){
+                const contacts = await response.json();
+                this.htmlRenderer.renderContacts(contacts);
+            }
+        }
     }
 
     edit(event) {
@@ -42,9 +53,9 @@ class ContactController {
 
 class FormController {
 
-    constructor(contactClient, contactRenderer) {
+    constructor(contactClient, htmlRenderer) {
         this.contactClient = contactClient;
-        this.contactRenderer = contactRenderer;
+        this.htmlRenderer = htmlRenderer;
         this._init();
     }
 
@@ -52,11 +63,12 @@ class FormController {
         const response = await this.contactClient.getAll();
         if (response.ok) {
             const contacts = await response.json();
-            this.contactRenderer.renderContacts(contacts);
+            this.htmlRenderer.renderContacts(contacts);
         }
     }
 
     handleEvent(event) {
+        event.stopPropagation();
         const action = event.target.dataset.action;
         if (action !== undefined)
             this[action](event);
@@ -64,27 +76,40 @@ class FormController {
 
     async add(event) {
         const formDom = event.currentTarget;
+
         const contact = {
             name: formDom.elements.name.value,
             lastName: formDom.elements.lastname.value,
             age: formDom.elements.age.value,
         };
+
         const response = await this.contactClient.add(contact);
+        if (response.ok) {
+            this._init();
+            this.htmlRenderer.clearForm();
+        }
+    }
+
+
+    async edit(event) {
+        const formDom = event.currentTarget;
+
+        const contact = {
+            id: formDom.elements.id.value,
+            name: formDom.elements.name.value,
+            lastName: formDom.elements.lastname.value,
+            age: formDom.elements.age.value,
+        };
+        const response = await this.contactClient.edit(contact);
 
         if (response.ok) {
             this._init();
-            this.contactRenderer.clearForm();
+            this.htmlRenderer.toAddForm();
         }
-       // document.forms[0].reset();
-    }
-
-
-    edit(event) {
-        //TODO see method add
     }
 
     cancel(event) {
-        this.contactRenderer.toAddForm();
+        this.htmlRenderer.toAddForm();
     }
 }
 
@@ -179,6 +204,22 @@ class ContactClient {
     getAll() {
         return fetch(ContactClient.CONTACTS_PATH, {
             method: 'GET',
+        });
+    }
+
+    remove(contact){
+        return fetch(ContactClient.CONTACTS_PATH + `/${contact.id}`, {
+            method: 'DELETE'
+        });
+    }
+
+    edit(contact){
+        return fetch(ContactClient.CONTACTS_PATH, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(contact)
         });
     }
 }

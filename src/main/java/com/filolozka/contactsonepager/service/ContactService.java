@@ -48,4 +48,16 @@ public class ContactService {
         contactRepository.delete(contactToDelete);
         return contactToDelete;
     }
+
+    public List<Contact> getAllByName(String name) {
+        return contactRepository.findByNameIgnoreCase(name);
+    }
+
+    public List<Contact> getAllByLastName(String lastName) {
+        return contactRepository.findByLastNameIgnoreCase(lastName);
+    }
+
+    public List<Contact> getAllByLastNameAndNameIgnoreCase(String lastName, String name){
+        return contactRepository.findByLastNameAndNameIgnoreCase(lastName, name);
+    }
 }
